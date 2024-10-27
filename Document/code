@@ -1,0 +1,20 @@
+Apex Class: DeliveryPointTriggerTest
+@isTest
+public class DeliveryPointTriggerTest {
+    @isTest
+    static void testDistanceAssignment() {
+        Delivery_point__c dropOff = new Delivery_point__c(
+            Distance__c = 100
+        );
+        insert dropOff;
+        Delivery_point__c result = [SELECT Id, Distance__c, distance_calculation__c FROM Delivery_point__c WHERE Id = :dropOff.Id];
+        System.assertEquals(result.Distance__c, result.distance_calculation__c, 'The distance_calculation__c field should match Distance__c');
+    }
+}
+
+Apex Trigger: DeliveryPointTrigger
+trigger DeliveryPointTrigger on Delivery_Point__c (before insert) {
+    for(Delivery_point__c Drop : Trigger.new){
+        Drop.Distance__c = Drop.distance_calculation__c;
+    }
+}
